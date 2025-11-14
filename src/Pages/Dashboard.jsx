@@ -1,8 +1,13 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+import Orders from "./Orders.jsx";
 
 function Dashboard() {
   return (
-    <div>Dashboard</div>
+    <div>
+      <Link to="/orders">Orders</Link>
+    </div>
+    
   )
 }
 
