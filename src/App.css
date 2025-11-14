@@ -17,9 +17,8 @@
 
 
 #header{
-    width: 99vw;
+    width: 100vw;
     height: 10vh;
-    text-align: center;
     border: 2px ;
     background-color: #c4437f;
     
@@ -42,9 +41,5 @@
 
 
 #outlet{
-     width: 78.85%;
-     text-align: center;
-     border: 2px;
-      
-
+    width:80%;
 }

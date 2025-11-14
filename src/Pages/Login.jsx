@@ -6,7 +6,7 @@ function Login() {
   return (
     <div>
 
-      <Link to="/dashboard">Dashboard</Link>
+      <Link to="/home">Home</Link>
     </div>
   )
 }

@@ -8,7 +8,6 @@ import {
 import './App.css'
 
 import Header from "./components/Header";
-import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
 
 // Pages
@@ -22,48 +21,44 @@ import Suppliers from "./Pages/Suppliers";
 import Staff from "./Pages/Staff";
 import Products from "./Pages/Products";
 import Customer from "./Pages/Customer";
+import Home from "./Pages/Home";
 
 function App() {
-  /* ---------------------- PUBLIC LAYOUT ---------------------- */
+
   const PublicLayout = () => {
     return (
       <div id="main">
         <div id="header"><Header /></div>
-        <div id = "body">
+        <div id="body">
           <div id="sidebar"><Sidebar /></div>
           <div id="outlet"><Outlet /></div>
         </div>
       </div>
-     
-    )
+    );
   };
 
-
-
-
-  const secLayout = () => {
+  const SecLayout = () => {
     return (
       <div id="main">
         <div id="header"><Header /></div>
         <div id="outlet"><Outlet /></div>
-        </div>
-    
-     
-    )
+      </div>
+    );
   };
 
   return (
     <Router>
       <Routes>
-        {/* ❌ No layout for Login */}
+
         <Route path="/" element={<Login />} />
 
-        {/* ❌ No layout for Dashboard */}
-             <Route path="/dashboard" element={<Dashboard />} />
+        {/* Dashboard → Header only */}
+        <Route element={<SecLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
 
-        {/* ✅ Layout applies to all these routes */}
+        {/* All others → Full layout */}
         <Route element={<PublicLayout />}>
-         
           <Route path="/staff" element={<Staff />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/products" element={<Products />} />
@@ -72,10 +67,13 @@ function App() {
           <Route path="/returns" element={<Returns />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/suppliers" element={<Suppliers />} />
+          <Route path="/home" element={<Home />} />
         </Route>
+
       </Routes>
     </Router>
   );
 }
+
 
 export default App;
