@@ -17,7 +17,7 @@ export const loginUser = createAsyncThunk(
 export const refreshAccessToken = createAsyncThunk("auth/refresh",
     async(_, {rejectWithValue})=>{
         try {
-            const refreshToken = localStorage.getItem("refreshtoken");
+            const refreshToken = localStorage.getItem("refreshToken");
             const res = await api.post("/companyrefresh",{refreshToken});
             return res.data.accesToken;
             
@@ -33,7 +33,7 @@ const authSlice = createSlice({
     name:"auth",
     initialState:{
         user:JSON.parse(localStorage.getItem("user")) || null,
-        accesstoken:localStorage.getItem("accessToken") || null,
+        accessToken:localStorage.getItem("accessToken") || null,
         refreshToken:localStorage.getItem("refreshToken")|| null,
         loading:false,
         error: null,
@@ -43,9 +43,9 @@ const authSlice = createSlice({
     reducers:{
         logout:(state)=>{
             state.user= null;
-            state.accesstoken= null;
+            state.accessToken= null;
             state.refreshToken= null;
-            state.isAuthenticated= null;
+            state.isAuthenticated= false;
 
 
             localStorage.removeItem("user");
@@ -67,7 +67,7 @@ const authSlice = createSlice({
         .addCase(loginUser.fulfilled,(state,action)=>{
             state.loading=false;
             state.user = action.payload.user;
-            state.accesstoken=action.payload.accesToken;
+            state.accessToken=action.payload.accesToken;
             state.refreshToken=action.payload.refreshToken;
             state.isAuthenticated= true;
 
@@ -89,17 +89,16 @@ const authSlice = createSlice({
         //---------refresh token----------/
         builder
         .addCase(refreshAccessToken.fulfilled,(state,action)=>{
-       state.accesstoken = action.payload;
+       state.accessToken = action.payload;
        localStorage.setItem("accessToken",action.payload);
         })
 
         .addCase(refreshAccessToken.rejected,(state)=>{
               state.user = null;
-         state.accesstoken = null;
-         state.accesstoken = null;
+         state.accessToken = null;
          state.isAuthenticated = false   
 
-         localStorage.removeItem("user"),
+         localStorage.removeItem("user");
          localStorage.removeItem("accessToken");
          localStorage.removeItem("refreshToken");
         });

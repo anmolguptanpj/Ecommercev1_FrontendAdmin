@@ -4,8 +4,10 @@ import {
   Routes,
   Route,
   Outlet,
+  Navigate,
 } from "react-router-dom";
-import './App.css'
+import { useSelector } from "react-redux";
+import "./App.css";
 
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -24,41 +26,62 @@ import Customer from "./Pages/Customer";
 import Home from "./Pages/Home";
 
 function App() {
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
-  const PublicLayout = () => {
-    return (
-      <div id="main">
-        <div id="header"><Header /></div>
-        <div id="body">
-          <div id="sidebar"><Sidebar /></div>
-          <div id="outlet"><Outlet /></div>
-        </div>
-      </div>
-    );
+  // ------------ PRIVATE ROUTE ------------
+  const PrivateRoute = ({ children }) => {
+    return isAuthenticated ? children : <Navigate to="/" replace />;
   };
 
-  const SecLayout = () => {
-    return (
-      <div id="main">
-        <div id="header"><Header /></div>
+  // ------------ LAYOUTS ------------
+  const PublicLayout = () => (
+    <div id="main">
+      <div id="header"><Header /></div>
+      <div id="body">
+        <div id="sidebar"><Sidebar /></div>
         <div id="outlet"><Outlet /></div>
       </div>
-    );
-  };
+    </div>
+  );
+
+  const SecLayout = () => (
+    <div id="main">
+      <div id="header"><Header /></div>
+      <div id="outlet"><Outlet /></div>
+    </div>
+  );
 
   return (
     <Router>
       <Routes>
 
-        <Route path="/" element={<Login />} />
+        {/* ---------- LOGIN ---------- */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? <Navigate to="/home" replace /> : <Login />
+          }
+        />
 
-        {/* Dashboard → Header only */}
-        <Route element={<SecLayout />}>
+        {/* ---------- DASHBOARD (Only Header) ---------- */}
+        <Route
+          element={
+            <PrivateRoute>
+              <SecLayout />
+            </PrivateRoute>
+          }
+        >
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
 
-        {/* All others → Full layout */}
-        <Route element={<PublicLayout />}>
+        {/* ---------- ALL OTHER PAGES (Header + Sidebar) ---------- */}
+        <Route
+          element={
+            <PrivateRoute>
+              <PublicLayout />
+            </PrivateRoute>
+          }
+        >
           <Route path="/staff" element={<Staff />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/products" element={<Products />} />
@@ -74,6 +97,5 @@ function App() {
     </Router>
   );
 }
-
 
 export default App;

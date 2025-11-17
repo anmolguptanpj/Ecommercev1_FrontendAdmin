@@ -25,6 +25,7 @@ function Login() {
     .then(()=>{
       navigate("/home");
     })
+    .catch((err) => console.log("Login failed:", err))
    
 
   }
@@ -56,6 +57,7 @@ function Login() {
 
     {isAuthenticated && (<p style={{color:"green"}}>Logged in Successfully </p>)}
    </div>
+   
   )
 }
 
