@@ -11,7 +11,7 @@
 }
 #body{
      display: flex;
-     overflow-y: auto;
+     
      height: 100vw;
 }
 
@@ -35,11 +35,12 @@
     text-align: center;
     border: 2px ;
     background-color: #9C95DC;
-    
+    overflow-y: auto;
 
 }
 
 
 #outlet{
     width:80%;
+    overflow-y: auto;
 }

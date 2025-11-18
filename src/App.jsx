@@ -24,6 +24,8 @@ import Staff from "./Pages/Staff";
 import Products from "./Pages/Products";
 import Customer from "./Pages/Customer";
 import Home from "./Pages/Home";
+import Registration from "./Pages/Registration";
+import SupplierRegistered from "./Pages/SupplierRegistered";
 
 function App() {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -91,6 +93,8 @@ function App() {
           <Route path="/sales" element={<Sales />} />
           <Route path="/suppliers" element={<Suppliers />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/register/supplier" element={<Registration/>}/>
+          <Route path="/supplier/congratulations/" element={<SupplierRegistered/>}/>
         </Route>
 
       </Routes>
