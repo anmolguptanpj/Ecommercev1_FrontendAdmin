@@ -6,8 +6,11 @@ import {
   Outlet,
   Navigate,
 } from "react-router-dom";
+
 import { useSelector } from "react-redux";
 import "./App.css";
+
+import { Toaster } from "react-hot-toast";  // ← ADD THIS
 
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -27,18 +30,14 @@ import Home from "./Pages/Home";
 import Registration from "./Pages/Registration";
 import SupplierRegistered from "./Pages/SupplierRegistered";
 import SupplierDetails from "./Pages/SupplierDetails";
-import EditSupplier from "./Pages/SupplierEdits";
 import SupplierEdits from "./Pages/SupplierEdits";
 
 function App() {
   const { isAuthenticated } = useSelector((state) => state.auth);
 
-  // ------------ PRIVATE ROUTE ------------
-  const PrivateRoute = ({ children }) => {
-    return isAuthenticated ? children : <Navigate to="/" replace />;
-  };
+  const PrivateRoute = ({ children }) =>
+    isAuthenticated ? children : <Navigate to="/" replace />;
 
-  // ------------ LAYOUTS ------------
   const PublicLayout = () => (
     <div id="main">
       <div id="header"><Header /></div>
@@ -57,53 +56,57 @@ function App() {
   );
 
   return (
-    <Router>
-      <Routes>
+    <>
+      <Toaster position="top-right" />   {/* ← GLOBAL TOAST COMPONENT */}
 
-        {/* ---------- LOGIN ---------- */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? <Navigate to="/home" replace /> : <Login />
-          }
-        />
+      <Router>
+        <Routes>
 
-        {/* ---------- DASHBOARD (Only Header) ---------- */}
-        <Route
-          element={
-            <PrivateRoute>
-              <SecLayout />
-            </PrivateRoute>
-          }
-        >
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Route>
+          {/* LOGIN */}
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? <Navigate to="/home" replace /> : <Login />
+            }
+          />
 
-        {/* ---------- ALL OTHER PAGES (Header + Sidebar) ---------- */}
-        <Route
-          element={
-            <PrivateRoute>
-              <PublicLayout />
-            </PrivateRoute>
-          }
-        >
-          <Route path="/staff" element={<Staff />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/customer" element={<Customer />} />
-          <Route path="/payments" element={<Payments />} />
-          <Route path="/returns" element={<Returns />} />
-          <Route path="/sales" element={<Sales />} />
-          <Route path="/suppliers" element={<Suppliers />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/register/supplier" element={<Registration/>}/>
-          <Route path="/supplier/congratulations/" element={<SupplierRegistered/>}/>
-          <Route path="/suppliers/details/:_id" element={<SupplierDetails/>}/>
-           <Route path="/suppliers/edit/:_id" element={<SupplierEdits/>}/>
-        </Route>
+          {/* DASHBOARD */}
+          <Route
+            element={
+              <PrivateRoute>
+                <SecLayout />
+              </PrivateRoute>
+            }
+          >
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
 
-      </Routes>
-    </Router>
+          {/* MAIN PAGES */}
+          <Route
+            element={
+              <PrivateRoute>
+                <PublicLayout />
+              </PrivateRoute>
+            }
+          >
+            <Route path="/staff" element={<Staff />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/customer" element={<Customer />} />
+            <Route path="/payments" element={<Payments />} />
+            <Route path="/returns" element={<Returns />} />
+            <Route path="/sales" element={<Sales />} />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/register/supplier" element={<Registration />} />
+            <Route path="/supplier/congratulations/" element={<SupplierRegistered />} />
+            <Route path="/suppliers/details/:_id" element={<SupplierDetails />} />
+            <Route path="/suppliers/edit/:_id" element={<SupplierEdits />} />
+          </Route>
+
+        </Routes>
+      </Router>
+    </>
   );
 }
 

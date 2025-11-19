@@ -29,7 +29,7 @@ function EditSupplier() {
     gstDocument: "",
     panDocument: ""
   });
-console.log(data?.data)
+
   const [gstFile, setGstFile] = useState(null);
   const [panFile, setPanFile] = useState(null);
 
@@ -70,7 +70,7 @@ console.log(data?.data)
   // Submit Update with FormData
   const updateSupplier = async () => {
     const fd = new FormData();
-
+    console.log("ram")
     // normal fields
     Object.keys(form).forEach((key) => {
       if (key === "address") {
@@ -86,8 +86,8 @@ console.log(data?.data)
     // files
     if (gstFile) fd.append("gstDocument", gstFile);
     if (panFile) fd.append("panDocument", panFile);
-
-    return api.put(`/admin/suppliers/${id}`, fd, {
+    console.log()
+    return api.put(`/admin/suppliers/${_id}`, fd, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   };
@@ -95,7 +95,7 @@ console.log(data?.data)
   const { mutate, isPending } = useMutation({
     mutationFn: updateSupplier,
     onSuccess: () => {
-      navigate(`/suppliers/details/${id}`);
+      navigate(`/suppliers/details/${_id}`);
     },
   });
 

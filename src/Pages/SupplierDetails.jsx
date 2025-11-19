@@ -30,47 +30,49 @@ console.log(supplier)
 
 
 function DocumentPreview({ title, url }) {
-  const isImage = url && (url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".webp"));
-  const isPdf = url && url.endsWith(".pdf");
+  // Convert to usable URL string
+  const fileUrl = typeof url === "string" ? url : url?.url || "";
+
+  const isImage =
+    fileUrl &&
+    (fileUrl.endsWith(".png") ||
+      fileUrl.endsWith(".jpg") ||
+      fileUrl.endsWith(".jpeg") ||
+      fileUrl.endsWith(".webp"));
+
+  const isPdf = fileUrl && fileUrl.endsWith(".pdf");
 
   return (
-    <div style={{
-      width: "200px",
-      height: "250px",
-      border: "1px solid #ddd",
-      borderRadius: "10px",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      overflow: "hidden",
-      textAlign: "center",
-      padding: "10px",
-      background: "#fafafa"
-    }}>
-      
+    <div
+      style={{
+        width: "200px",
+        height: "250px",
+        border: "1px solid #ddd",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        overflow: "hidden",
+        textAlign: "center",
+        padding: "10px",
+        background: "#fafafa",
+      }}
+    >
       <h4>{title}</h4>
 
-      {!url && (
-        <p style={{ color: "gray", fontSize: "14px" }}>
-          No document uploaded
-        </p>
-      )}
+      {!fileUrl && <p style={{ color: "gray", fontSize: "14px" }}>No document uploaded</p>}
 
       {isImage && (
-        <img 
-          src={url}
+        <img
+          src={fileUrl}
           style={{ width: "100%", height: "100%", objectFit: "contain" }}
         />
       )}
 
       {isPdf && (
-        <iframe 
-          src={url}
-          style={{ width: "100%", height: "100%" }}
-        />
+        <iframe src={fileUrl} style={{ width: "100%", height: "100%" }} />
       )}
-
     </div>
   );
 }
