@@ -49,7 +49,7 @@ function Suppliers() {
           <td>{s.supplierNo}</td>
           <td>{s.supplierName}</td>
           <td>{`${s.createdBy.firstName} ${s.createdBy.lastName}`}</td>
-           <td><span onClick={5}>Details</span> </td>
+           <td><span onClick={()=>navigate(`/suppliers/details/${s._id}`)}>Details</span> </td>
           </tr>
         ))}
    
