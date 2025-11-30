@@ -47,6 +47,14 @@ const authSlice = createSlice({
     return null;
   }
 })(),
+  extraDetails: (() => {
+  const stored = localStorage.getItem("extraDetails");
+  try {
+    return stored && stored !== "undefined" ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+})(),
     accessToken: localStorage.getItem("accessToken") || null,
     refreshToken: localStorage.getItem("refreshToken") || null,
     loading: false,
@@ -60,10 +68,12 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
+      state.extraDetails = null;
 
       localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("extraDetails")
     },
   },
 
@@ -81,15 +91,18 @@ const authSlice = createSlice({
     const user = action.payload.data.user;
     const accessToken = action.payload.data.accessToken;
     const refreshToken = action.payload.data.refreshToken;
+    const extraDetails = action.payload.data.extraDetails;
 
     state.user = user;
     state.accessToken = accessToken;
     state.refreshToken = refreshToken;
     state.isAuthenticated = true;
+    state.extraDetails = extraDetails;
 
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem("extraDetails",JSON.stringify(extraDetails))
 })
 
 
@@ -111,10 +124,12 @@ const authSlice = createSlice({
         state.accessToken = null;
         state.refreshToken = null;
         state.isAuthenticated = false;
+        state.extraDetails = null;
 
         localStorage.removeItem("user");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("extraDetails")
       });
   },
 });
