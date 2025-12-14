@@ -16,7 +16,7 @@ function Header() {
   };
 
   return (
-    <div className='bg-slate-700 h-20 flex justify-center items-center  w-full' id="header_main">
+    <div className='bg-slate-950 h-20 flex justify-center items-center  w-full' id="header_main">
       <div className='text-5xl w-[25%] px-5 flex justify-center items-center font-bold' id="logo"><h1>Codex</h1></div>
 
       <div className='flex-1  items-center g' id="links">

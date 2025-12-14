@@ -68,7 +68,7 @@ function Login() {
         <br />
 
       <div className='flex flex-row w-full justify-center'>
-          <button className={`${loading ? "bg-yellow-400" : "bg-green-500"} w-50 p-2 border-4 border-transparent`} type="submit" disabled={loading}>
+          <button className={`${loading ? "bg-yellow-400" : "bg-green-500"} w-50 p-2 border-4 n`} type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
       </div>
