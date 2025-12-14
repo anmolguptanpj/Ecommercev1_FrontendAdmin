@@ -38,7 +38,7 @@ function Login() {
     <div className='w-screen h-screen flex flex-col items-center bg-blue-950'>
 
       <div className='text-4xl p-30'>
-        <p>Welcome to login page</p>
+        <p className='font-bold'>Welcome to login page</p>
       </div>
 
       <form className='flex flex-col ' onSubmit={handleSubmit}>
@@ -68,13 +68,13 @@ function Login() {
         <br />
 
       <div className='flex flex-row w-full justify-center'>
-          <button className={`${loading ? "bg-yellow-400" : "bg-green-500"} w-50 p-2 border-4`} type="submit" disabled={loading}>
+          <button className={`${loading ? "bg-yellow-400" : "bg-green-500"} w-50 p-2 border-4 border-transparent`} type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
       </div>
       </form>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className='p-5' style={{ color: "red" }}>{error}</p>}
       {isAuthenticated && <p style={{ color: "green" }}>Logged in Successfully</p>}
     </div>
   );
