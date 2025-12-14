@@ -9,6 +9,7 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [show,setShow] = useState(false)
 
   // FRONTEND identity
   const loginFrom = "ADMIN";
@@ -34,9 +35,15 @@ function Login() {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className='w-screen h-screen flex flex-col items-center bg-black'>
+
+      <div className='text-4xl p-30'>
+        <p>Welcome to login page</p>
+      </div>
+
+      <form className='flex flex-col ' onSubmit={handleSubmit}>
         <input
+        className='border-3 w-100 p-1'
           type='email'
           placeholder="Enter Email"
           value={email}
@@ -45,18 +52,26 @@ function Login() {
         />
         <br />
 
-        <input
-          type="password"
+       <div className='flex flex-col gap-2'>
+         <input
+           className='border-3 w-100 p-1'
+          type={show ? "text" : "password"}
           placeholder='Enter Password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+       <div className='flex gap-2 justify-center' > <label className='text-xl'>Show password</label> <input className='border-3 w-6 h-6 outline-none  rounded-2xl' type='checkbox' value={show} onClick={()=>setShow(prev => !prev)}/>
+        </div>
+       </div>
+
         <br />
 
-        <button type="submit" disabled={loading}>
+      <div className='flex flex-row w-full justify-center'>
+          <button className={`${loading ? "bg-yellow-400" : "bg-green-500"} w-50 p-2 border-4`} type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
+      </div>
       </form>
 
       {error && <p style={{ color: "red" }}>{error}</p>}

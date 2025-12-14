@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 *{
     margin: 0;
 }
@@ -19,22 +21,19 @@
 #header{
     width: 100vw;
     height: 10vh;
-    border: 2px ;
-    background-color: #c4437f;
+  
     
 }
 
 
 
 #body{
-    flex:1;
+
+    
 }
 
 #sidebar{
     width: 20%;
-    text-align: center;
-    border: 2px ;
-    background-color: #9C95DC;
     overflow-y: auto;
 
 }

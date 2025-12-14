@@ -11,11 +11,15 @@ export const loginUser = createAsyncThunk(
         password,
         loginFrom,
       });
-         console.log(res.data)
+         console.log(res)
       return res.data;
 
     } catch (err) {
-      return rejectWithValue(err.response?.data || "login failed");
+       console.log("FULL ERROR:", err);
+      console.log("SERVER RESPONSE:", err.message);
+
+    
+      return rejectWithValue(err.message || "login failed");
     }
   }
 );

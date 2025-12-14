@@ -42,7 +42,7 @@ function App() {
     <div id="main">
       <div id="header"><Header /></div>
       <div id="body">
-        <div id="sidebar"><Sidebar /></div>
+        <div className="bg-yellow-500" id="sidebar"><Sidebar /></div>
         <div id="outlet"><Outlet /></div>
       </div>
     </div>

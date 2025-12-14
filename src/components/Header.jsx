@@ -8,36 +8,31 @@ function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const Mylinks = "px-2  hover:bg-green-400  border-3 border-transparent rounded-xl bg-blue-400"
+
   const handleLogout = () => {
     dispatch(logout());
     navigate("/"); // redirect to login page
   };
 
   return (
-    <div id="header_main">
-      <div id="logo"><h1>Codex</h1></div>
+    <div className='bg-slate-700' id="header_main">
+      <div className='text-4xl px-5 flex justify-center items-center font-bold' id="logo"><h1>Codex</h1></div>
 
       <div id="links">
-        <div id="dis"><h2>Links</h2></div>
+        <div className=" text-2xl font-bold p-1 " id="dis"><h2>Links</h2></div>
 
-        <div id="nav">
-          <Link to="/dashboard" className='Mylinks'>Dashboard</Link>
+        <div className='' id="nav">
+          <Link to="/dashboard" className={Mylinks}>Dashboard</Link>
 
           <button
             onClick={handleLogout}
-            className='Mylinks'
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              color: "inherit"
-            }}
+            className={`${Mylinks} cursor-pointer`}
           >
             Logout
           </button>
 
-          <Link to="/home" className='Mylinks'>Home</Link>
+          <Link to="/home" className={Mylinks}>Home</Link>
         </div>
       </div>
     </div>
