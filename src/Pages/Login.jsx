@@ -35,7 +35,7 @@ function Login() {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className='w-screen h-screen flex flex-col items-center bg-black'>
+    <div className='w-screen h-screen flex flex-col items-center bg-blue-950'>
 
       <div className='text-4xl p-30'>
         <p>Welcome to login page</p>

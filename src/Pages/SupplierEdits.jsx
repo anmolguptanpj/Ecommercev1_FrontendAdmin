@@ -6,6 +6,8 @@ import api from "../api";
 function EditSupplier() {
   const navigate = useNavigate();
   const { _id } = useParams();
+    const heading = ""
+  const subheading =""
 
   // Fetch Supplier Data
   const fetchSupplier = async () => {
@@ -103,38 +105,47 @@ function EditSupplier() {
   if (isError) return <p>Error loading supplier.</p>;
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: "40px" }}>
+    <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
       <div style={{ width: "500px" }}>
-        <h1>Edit Supplier</h1>
+        <h1 className="text-4xl text-center font-bold border-y-4 py-3" >Edit Supplier</h1>
 
-        <h3>Basic Information</h3>
+       <div className="p-2 border-b-4">
+         <h3 className="border-y-2 text-center">Basic Information</h3>
+       <div className="flex gap-2">
+          <label>Name:</label>
         <input
+        className="border-b-2 focus:outline-none"
           type="text"
           name="supplierName"
           value={form.supplierName}
           onChange={handleChange}
           placeholder="Supplier Name"
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
         />
+       </div>
 
-        <h3>Documents</h3>
+       <div className="py-2">
+         <h3 className="border-y-2 text-center" >Documents</h3>
 
-        <label>GST Number:</label>
+        <div className="flex gap-2 " >
+          <label>GST Number:</label>
         <input
+         className="border-b-2 focus:outline-none"
           type="text"
           name="gstNumber"
           value={form.gstNumber}
           onChange={handleChange}
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
         />
 
         <label>Upload GST Document:</label>
         <input
+           className="border-b-2 focus:outline-none"
           type="file"
           accept="image/*,.pdf"
           onChange={(e) => setGstFile(e.target.files[0])}
-          style={{ width: "100%", marginBottom: "10px" }}
+            style={{ width: "100%", marginBottom: "10px" }}
         />
+        </div>
+       </div>
 
         {form.gstDocument && (
           <div style={{ marginBottom: "10px" }}>
@@ -144,22 +155,26 @@ function EditSupplier() {
           </div>
         )}
 
-        <label>PAN Number:</label>
+      <div className="flex gap-2  ">
+          <label>PAN Number:</label>
         <input
+        
+         className="border-b-2 focus:outline-none"
           type="text"
           name="panNumber"
           value={form.panNumber}
           onChange={handleChange}
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
         />
 
         <label>Upload PAN Document:</label>
         <input
+           className="border-b-2 focus:outline-none"
           type="file"
           accept="image/*,.pdf"
           onChange={(e) => setPanFile(e.target.files[0])}
           style={{ width: "100%", marginBottom: "10px" }}
         />
+      </div>
 
         {form.panDocument && (
           <div style={{ marginBottom: "10px" }}>
@@ -169,64 +184,77 @@ function EditSupplier() {
           </div>
         )}
 
-        <h3>Address</h3>
-        <input
+     <div>
+         <h3 className="border-y-2 text-center">Address</h3>
+    <div className="flex flex-col">
+         <div className="flex gap-3">
+          <label>HouseNo:</label>
+           <input
           type="text"
+          className="border-b-2 focus:outline-none "
           placeholder="House No"
           name="address.houseNo"
           value={form.address.houseNo}
           onChange={handleChange}
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-        />
-        <input
+          
+        /></div>
+      <div className="flex gap-2">
+        <label>Street:</label>
+          <input
           type="text"
+             className="border-b-2 focus:outline-none"
           placeholder="Street"
           name="address.street"
           value={form.address.street}
           onChange={handleChange}
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+        
         />
+      </div>
+   <div className="flex gap-2">
+       <label>State:</label>
         <input
           type="text"
-          placeholder="City"
-          name="address.city"
-          value={form.address.city}
-          onChange={handleChange}
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-        />
-        <input
-          type="text"
+             className="border-b-2 focus:outline-none"
           placeholder="State"
           name="address.state"
           value={form.address.state}
           onChange={handleChange}
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+         
         />
+   </div>
+  <div className="flex gap-2">
+     <label>
+    PIN CODE:
+   </label>
         <input
           type="text"
+             className="border-b-2 focus:outline-none"
           placeholder="Pincode"
           name="address.pincode"
           value={form.address.pincode}
           onChange={handleChange}
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
         />
+    </div>
+  </div>
+     </div>
+       </div>
 
-        <br />
-
-        <button 
+      <div className=" pt-2 flex justify-evenly">
+          <button 
+          className="bg-green-500 w-20 px-2 rounded-2xl"
           onClick={() => mutate()} 
           disabled={isPending}
-          style={{ padding: "10px 20px", cursor: "pointer" }}
         >
           {isPending ? "Saving..." : "Save"}
         </button>
 
         <button
+        className="bg-gray-400 px-2 rounded-2xl"
           onClick={() => navigate(`/suppliers/details/${_id}`)}
-          style={{ marginLeft: "10px", padding: "10px 20px", cursor: "pointer" }}
         >
           Cancel
         </button>
+      </div>
       </div>
     </div>
   );

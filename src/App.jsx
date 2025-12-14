@@ -42,8 +42,8 @@ function App() {
     <div id="main">
       <div id="header"><Header /></div>
       <div id="body">
-        <div className="bg-yellow-500" id="sidebar"><Sidebar /></div>
-        <div id="outlet"><Outlet /></div>
+        <div className="bg-yellow-400 shadow-2xl" id="sidebar"><Sidebar /></div>
+        <div className="bg-blue-950" id="outlet"><Outlet /></div>
       </div>
     </div>
   );

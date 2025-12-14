@@ -6,6 +6,7 @@ import api from '../api'; // your axios instance
 export default function Registration() {
 
   const navigate = useNavigate();
+  const[message,setMessage] = useState("")
 
   const [form, setForm] = useState({
     firstName: "",
@@ -54,7 +55,8 @@ export default function Registration() {
       navigate("/supplier/congratulations", { state: res.data });
 
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to register");
+      console.log(error)
+      toast.error(error.data?.message || "Failed to register");
     }
   };
 
@@ -63,15 +65,17 @@ export default function Registration() {
   // ---------------------
   return (
 <div style={{display:'flex',justifyContent:'center'}}>
-      <form onSubmit={handleCreate} style={{ padding: "20px",}}>
+      <form className='flex-col flex gap-5' onSubmit={handleCreate} style={{ padding: "20px",}}>
 
-      <h2>Create Supplier</h2>
+      <h2 className="w-full text-2xl font-bold bg-yellow-500 rounded-2xl text-center">Create Supplier</h2>
 
       {/* User Inputs */}
-   <fieldset style={{display:'flex',justifyContent:'center'}}>
-    <legend>Personal Details</legend>
+  <div className='border-y-2 py-3'>
+     <fieldset className='gap-3' style={{display:'flex',justifyContent:'center'}}>
+    <legend className=''>Personal Details</legend>
        <lable >First Name :   </lable><br/>
       <input
+       className='border-b-2 focus:outline-none '
         type="text"
         name="firstName"
         placeholder="First Name"
@@ -80,6 +84,7 @@ export default function Registration() {
       /><br />
  <lable >Last Name :</lable><br/>
       <input
+       className='border-b-2 focus:outline-none '
         type="text"
         name="lastName"
         placeholder="Last Name"
@@ -88,6 +93,7 @@ export default function Registration() {
       /><br />
  <lable >Email:</lable><br/>
       <input
+       className='border-b-2 focus:outline-none '
         type="email"
         name="email"
         placeholder="Email"
@@ -96,6 +102,7 @@ export default function Registration() {
       /><br />
  <lable >Phone:</lable><br/>
       <input
+       className='border-b-2 focus:outline-none '
         type="text"
         name="phone"
         placeholder="Phone"
@@ -103,10 +110,13 @@ export default function Registration() {
         onChange={handleChange}
       /><br />
    </fieldset>
- <fieldset style={{display:'flex',justifyContent:'center'}}>
+  </div>
+<div className='border-y-2 py-3'>
+   <fieldset className='gap-3' style={{display:'flex'}}>
   <legend>Business Tax Details</legend>
   <lable >Supplier Name :</lable><br/>
       <input
+       className='border-b-2 focus:outline-none '
         type="text"
         name="supplierName"
         placeholder="Supplier Name"
@@ -115,6 +125,7 @@ export default function Registration() {
       /><br />
 <lable>GST NUMBER :</lable><br/>
       <input
+       className='border-b-2 focus:outline-none '
         type="text"
         name="gstNumber"
         placeholder="GST Number"
@@ -123,6 +134,7 @@ export default function Registration() {
       /><br />
 <lable>PAN NUMBER : </lable><br/>
       <input
+       className='border-b-2 focus:outline-none '
         type="text"
         name="panNumber"
         placeholder="PAN Number"
@@ -130,11 +142,14 @@ export default function Registration() {
         onChange={handleChange}
       /><br />
  </fieldset>
-    <fieldset style={{display:'flex',justifyContent:'center'}}>
+</div>
+<div className='border-y-2 py-3'>
+    <fieldset  className='flex '>
       <legend>Supplier Business Address</legend>
       <lable>House no : </lable><br/>
       <input
         type="text"
+        className='border-b-2 focus:outline-none '
         name="houseNo"
         placeholder="House No"
         value={address.houseNo}
@@ -143,6 +158,7 @@ export default function Registration() {
 <lable>Street :</lable><br/>
       <input
         type="text"
+         className='border-b-2 focus:outline-none '
         name="street"
         placeholder="Street"
         value={address.street}
@@ -151,6 +167,7 @@ export default function Registration() {
 <lable>City :</lable><br/>
       <input
         type="text"
+         className='border-b-2 focus:outline-none '
         name="city"
         placeholder="City"
         value={address.city}
@@ -159,6 +176,7 @@ export default function Registration() {
 <lable>Pin Code :</lable><br/>
       <input
         type="text"
+         className='border-b-2 focus:outline-none '
         name="pincode"
         placeholder="Pincode"
         value={address.pincode}
@@ -167,20 +185,24 @@ export default function Registration() {
 <lable> State :</lable><br/>
       <input
         type="text"
+         className='border-b-2 focus:outline-none '
         name="state"
         placeholder="State"
         value={address.state}
         onChange={handleAddress}
       /><br />
     </fieldset>
+</div>
 
-      {/* Buttons */}
-      <button type="submit">Create Supplier</button>
+   <div className='flex  gap-3 flex-col items-center justify-center w-full '>
+       {/* Buttons */}
+      <button className='px-2 bg-green-500 rounded hover:bg-green-800 ' type="submit">Create Supplier</button>
 
-      <button type="button" onClick={() => navigate("/suppliers")} style={{ marginLeft: "10px" }}>
+      <button className='px-2  bg-blue-500 rounded hover:bg-blue-800 ' type="button" onClick={() => navigate("/suppliers")} style={{ marginLeft: "10px" }}>
         Back
       </button>
 
+   </div>
     </form>
 
 </div>

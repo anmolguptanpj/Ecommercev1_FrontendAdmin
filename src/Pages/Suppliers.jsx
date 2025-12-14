@@ -1,6 +1,6 @@
 import React from 'react'
 import api from '../api'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 function Suppliers() {
@@ -28,35 +28,35 @@ function Suppliers() {
   const suppliers = data?.data || []
   
   return (
-<>
-<div><span onClick={()=>registerNew()}>Register new Supplier</span></div>
-    <div style={{display:'flex',justifyContent:'center'}}> <h2>Suppliers</h2></div>
- <div style={{display:'flex',justifyContent:'center'}}>
-
-   
-   <table border={2} cellPadding={0} cellSpacing={5}  >
-    <thead>
+<div className='flex gap-6 flex-col  items-center pt-5 w-full h-full '>
+<div className=' cursor-pointer w-full text-center rounded-2xl py-1 m-5 bg-green-600   '><Link className='block mt-5' to={"/register/supplier"} >Register new Supplier</Link></div>
+    <div style={{display:'flex',justifyContent:'center'}} className=' '> <h2 className='text-3xl font-bold'>Suppliers</h2></div>
+ <div className=' w-full h-full ' style={{display:'flex',justifyContent:'center'}}>
+<div className='pt-3'> <table className='' >
+    <thead className='w-full border-y-4'>
         <tr>
-        <td>Supplier No</td>
-        <td>Supplier Name</td>
-        <td>Approved By</td>
-        <td>Actions </td>
+        <th className='p-2'>Supplier No</th>
+        <th className='p-2' >Supplier Name</th>
+        <th className='p-2'>Approved By</th>
+        <th className='p-2'>Actions </th>
         </tr>
     </thead>
       <tbody>
         {suppliers.map((s)=>(
-          <tr key={s._id}>
-          <td>{s.supplierNo}</td>
-          <td>{s.supplierName}</td>
-          <td>{`${s.createdBy.firstName} ${s.createdBy.lastName}`}</td>
-           <td><span onClick={()=>navigate(`/suppliers/details/${s._id}`)}>Details</span> </td>
+          <tr className='border-b-2' key={s._id}>
+          <td className='p-2'>{s.supplierNo}</td>
+          <td className='p-2' >{s.supplierName}</td>
+          <td className='p-2'>{`${s.createdBy.firstName} ${s.createdBy.lastName}`}</td>
+           <td className='p-2' ><button className='px-1 bg-green-400 border-2 rounded-xl text-shadow-2xs' onClick={()=>navigate(`/suppliers/details/${s._id}`)}>Details</button> </td>
           </tr>
         ))}
    
     </tbody>
-   </table>
+   </table></div>
+   
+  
  </div>
- </>
+ </div>
   )
 }
 
