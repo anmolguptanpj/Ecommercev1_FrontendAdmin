@@ -1,95 +1,85 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import {
+  ButtonLink,
+  DetailItem,
+  FieldGrid,
+  Section,
+  SecondaryButton,
+  SupplierBody,
+  SupplierHeader,
+  SupplierPage,
+  Surface,
+} from "../components/SupplierUI";
 
 export default function SupplierRegistered() {
-
   const { state } = useLocation();
-  const navigate = useNavigate();
+  const payload = state?.data;
+  const user = payload?.user;
+  const supplier = payload?.supplier;
+  const address = supplier?.address || {};
 
-  if (!state) return <p>No data received.</p>;
-
-  const { user, supplier } = state.data;
-
-  // --------------------------
-  // PRINT HANDLER
-  // --------------------------
   const handlePrint = () => {
     window.print();
   };
 
+  if (!user || !supplier) {
+    return (
+      <SupplierPage>
+        <SupplierHeader
+          title="Supplier Registration"
+          subtitle="No registration data was received for this page"
+          actions={<ButtonLink to="/suppliers" variant="secondary">Back to Suppliers</ButtonLink>}
+        />
+      </SupplierPage>
+    );
+  }
+
   return (
-    <div style={{ padding: "30px", maxWidth: "900px", margin: "0 auto" }}>
+    <SupplierPage>
+      <SupplierHeader
+        title="Supplier Registered"
+        subtitle={`${supplier.supplierName} is ready to review`}
+        actions={
+          <>
+            <SecondaryButton onClick={handlePrint}>Print</SecondaryButton>
+            <ButtonLink to={`/suppliers/details/${supplier._id}`}>View Details</ButtonLink>
+            <ButtonLink to="/suppliers" variant="secondary">Back to Suppliers</ButtonLink>
+          </>
+        }
+      />
 
-      <h1 style={{ marginBottom: "20px" }}>🎉 Supplier Registered Successfully!</h1>
+      <SupplierBody>
+        <Surface>
+          <Section title="Supplier Details">
+            <FieldGrid>
+              <DetailItem label="Supplier Name" value={supplier.supplierName} />
+              <DetailItem label="Supplier No" value={supplier.supplierNo} />
+              <DetailItem label="GST Number" value={supplier.gstNumber || "N/A"} />
+              <DetailItem label="PAN Number" value={supplier.panNumber || "N/A"} />
+            </FieldGrid>
+          </Section>
 
-      {/* PRINT BUTTON */}
-      <button 
-        onClick={handlePrint}
-        style={{
-          padding: "10px 20px",
-          fontSize: "16px",
-          cursor: "pointer",
-          marginBottom: "20px",
-          backgroundColor: "#4CAF50",
-          color: "white",
-          border: "none",
-          borderRadius: "5px"
-        }}
-      >
-        🖨️ Print 
-      </button>
+          <Section title="Contact Person">
+            <FieldGrid>
+              <DetailItem label="Name" value={`${user.firstName || ""} ${user.lastName || ""}`.trim() || "N/A"} />
+              <DetailItem label="Email" value={user.email || "N/A"} />
+              <DetailItem label="Phone" value={user.phone || "N/A"} />
+              <DetailItem label="Role" value={user.role || "N/A"} />
+            </FieldGrid>
+          </Section>
 
-      {/* USER DETAILS TABLE */}
-      <h2>User Details</h2>
-      <table border="1" cellPadding="10" cellSpacing="0" style={{ width: "100%", marginBottom: "20px" }}>
-        <tbody>
-          <tr><th>First Name</th><td>{user.firstName}</td></tr>
-          <tr><th>Last Name</th><td>{user.lastName}</td></tr>
-          <tr><th>Email</th><td>{user.email}</td></tr>
-          <tr><th>Phone</th><td>{user.phone}</td></tr>
-          <tr><th>Role</th><td>{user.role}</td></tr>
-        </tbody>
-      </table>
-
-      {/* SUPPLIER DETAILS TABLE */}
-      <h2>Supplier Details</h2>
-      <table border="1" cellPadding="10" cellSpacing="0" style={{ width: "100%", marginBottom: "20px" }}>
-        <tbody>
-          <tr><th>Supplier Name</th><td>{supplier.supplierName}</td></tr>
-          <tr><th>Supplier No</th><td>{supplier.supplierNo}</td></tr>
-          <tr><th>GST Number</th><td>{supplier.gstNumber}</td></tr>
-          <tr><th>PAN Number</th><td>{supplier.panNumber}</td></tr>
-        </tbody>
-      </table>
-
-      {/* ADDRESS TABLE */}
-      <h2>Address</h2>
-      <table border="1" cellPadding="10" cellSpacing="0" style={{ width: "100%", marginBottom: "20px" }}>
-        <tbody>
-          <tr><th>House No</th><td>{supplier.address.houseNo}</td></tr>
-          <tr><th>Street</th><td>{supplier.address.street}</td></tr>
-          <tr><th>City</th><td>{supplier.address.city}</td></tr>
-          <tr><th>Pincode</th><td>{supplier.address.pincode}</td></tr>
-          <tr><th>State</th><td>{supplier.address.state}</td></tr>
-        </tbody>
-      </table>
-
-      {/* BACK BUTTON */}
-      <button 
-        onClick={() => navigate('/suppliers')}
-        style={{
-          padding: "10px 20px",
-          fontSize: "16px",
-          cursor: "pointer",
-          backgroundColor: "#008CBA",
-          color: "white",
-          border: "none",
-          borderRadius: "5px"
-        }}
-      >
-        ⬅ Back to Supplier List
-      </button>
-
-    </div>
+          <Section title="Business Address">
+            <FieldGrid>
+              <DetailItem label="House No" value={address.houseNo || "N/A"} />
+              <DetailItem label="Street" value={address.street || "N/A"} />
+              <DetailItem label="City" value={address.city || "N/A"} />
+              <DetailItem label="State" value={address.state || "N/A"} />
+              <DetailItem label="Pincode" value={address.pincode || "N/A"} />
+            </FieldGrid>
+          </Section>
+        </Surface>
+      </SupplierBody>
+    </SupplierPage>
   );
 }

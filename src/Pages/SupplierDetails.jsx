@@ -1,140 +1,107 @@
-import { useQuery } from '@tanstack/react-query';
-import React from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import api from '../api';
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import api from "../api";
+import {
+  ButtonLink,
+  DetailItem,
+  DocumentPreview,
+  FieldGrid,
+  Section,
+  SupplierBody,
+  SupplierHeader,
+  SupplierPage,
+  Surface,
+} from "../components/SupplierUI";
 
 function SupplierDetails() {
-const navigate = useNavigate();
-const {_id} = useParams()
-const getSupplierDetails = async()=>{
-    const res = await api.get(`/admin/suppliers/${_id}`)
+  const { _id } = useParams();
 
-    return res.data
-}
-  const heading = "py-2"
-  const subheading ="text-center font-bold border-y-2 "
-    
-const{data,isLoading,isError} = useQuery({
-    queryKey:["supplier",_id],
-    queryFn:getSupplierDetails,
-    enabled:!!_id
-})
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["supplier", _id],
+    queryFn: async () => {
+      const res = await api.get(`/admin/suppliers/${_id}`);
+      return res.data;
+    },
+    enabled: !!_id,
+  });
 
-if(isLoading)
-    return<p>Loading Details</p>
-if(isError)
-    return<p>Failed to fetch Supplier details</p>
-const supplier = data?.data
+  if (isLoading) {
+    return (
+      <SupplierPage>
+        <div className="flex min-h-screen items-center justify-center text-gray-500">
+          Loading supplier details...
+        </div>
+      </SupplierPage>
+    );
+  }
 
-console.log(supplier)
+  if (isError) {
+    return (
+      <SupplierPage>
+        <div className="flex min-h-screen items-center justify-center text-red-500">
+          Failed to load supplier details
+        </div>
+      </SupplierPage>
+    );
+  }
 
-
-
-
-function DocumentPreview({ title, url }) {
-  // Convert to usable URL string
-  const fileUrl = typeof url === "string" ? url : url?.url || "";
-
-  const isImage =
-    fileUrl &&
-    (fileUrl.endsWith(".png") ||
-      fileUrl.endsWith(".jpg") ||
-      fileUrl.endsWith(".jpeg") ||
-      fileUrl.endsWith(".webp"));
-
-  const isPdf = fileUrl && fileUrl.endsWith(".pdf");
+  const supplier = data?.data || {};
+  const contactName = `${supplier.user?.firstName || ""} ${supplier.user?.lastName || ""}`.trim();
+  const address = supplier.address || {};
 
   return (
-    <div
-      style={{
-        width: "200px",
-        height: "250px",
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        overflow: "hidden",
-        textAlign: "center",
-        padding: "10px",
-        background: "#fafafa",
-      }}
-    >
-      <h4>{title}</h4>
+    <SupplierPage>
+      <SupplierHeader
+        title="Supplier Details"
+        subtitle={supplier.supplierName || "Review supplier profile and documents"}
+        actions={
+          <>
+            <ButtonLink to={`/suppliers/edit/${_id}`}>Edit Supplier</ButtonLink>
+            <ButtonLink to="/suppliers" variant="secondary">Back to Suppliers</ButtonLink>
+          </>
+        }
+      />
 
-      {!fileUrl && <p style={{ color: "gray", fontSize: "14px" }}>No document uploaded</p>}
+      <SupplierBody>
+        <Surface>
+          <Section title="Business Profile">
+            <FieldGrid>
+              <DetailItem label="Supplier Name" value={supplier.supplierName || "N/A"} />
+              <DetailItem label="Supplier No" value={supplier.supplierNo || "N/A"} />
+              <DetailItem label="GST Number" value={supplier.gstNumber || "N/A"} />
+              <DetailItem label="PAN Number" value={supplier.panNumber || "N/A"} />
+            </FieldGrid>
+          </Section>
 
-      {isImage && (
-        <img
-          src={fileUrl}
-          style={{ width: "100%", height: "100%", objectFit: "contain" }}
-        />
-      )}
+          <Section title="Contact Person">
+            <FieldGrid>
+              <DetailItem label="Name" value={contactName || "N/A"} />
+              <DetailItem label="Email" value={supplier.user?.email || "N/A"} />
+              <DetailItem label="Phone" value={supplier.user?.phone || "N/A"} />
+            </FieldGrid>
+          </Section>
 
-      {isPdf && (
-        <iframe src={fileUrl} style={{ width: "100%", height: "100%" }} />
-      )}
-    </div>
+          <Section title="Business Address">
+            <FieldGrid>
+              <DetailItem label="House No" value={address.houseNo || "N/A"} />
+              <DetailItem label="Street" value={address.street || "N/A"} />
+              <DetailItem label="City" value={address.city || "N/A"} />
+              <DetailItem label="State" value={address.state || "N/A"} />
+              <DetailItem label="Pincode" value={address.pincode || "N/A"} />
+            </FieldGrid>
+          </Section>
+
+          <Section title="Documents">
+            <div className="grid gap-5 lg:grid-cols-2">
+              <DocumentPreview title="GST Document" url={supplier.gstDocument} />
+              <DocumentPreview title="PAN Document" url={supplier.panDocument} />
+            </div>
+          </Section>
+        </Surface>
+      </SupplierBody>
+    </SupplierPage>
   );
 }
 
-
-  return (
-  <div className='  w-full h-full  ' style={{display:'flex',justifyContent:'center'}} >
-  <div>
-    
-       <div className='w-full text-center border-y-4 pb-6 pt-4'> <h1 className='text-3xl font-bold w-full'>Supplier Details</h1> </div>
-<div className={heading}>
-  
-    <p>Name:{supplier?.supplierName}</p>
-    <p>Supplier No: {supplier?.supplierNo}</p>
-</div>
-    
-
- <div className={heading}>
-   <div className={subheading}>  <h3>Contact Person</h3></div>
-    <p>Name: {supplier?.user?.firstName} {supplier?.user?.lastName}</p>
-    <p>Email: {supplier?.user?.email}</p>
-    <p>Phone: {supplier?.user?.phone}</p>
- </div>
-  <div className={heading}>
-     <div  className={subheading} > <h3>Documents</h3></div>
-    <p>GST Number: {supplier?.gstNumber}</p>
-    <p>PAN Number: {supplier?.panNumber}</p>
-  </div>
-
-  <div  style={{ display: "flex", gap: "20px" }}>
-
-  <DocumentPreview 
-    title="GST Document" 
-    url={supplier?.gstDocument} 
-  />
-
-  <DocumentPreview 
-    title="PAN Document" 
-    url={supplier?.panDocument} 
-  />
-
-</div>
-
-   <div className={`${heading} m-5`} >
-    <div  className={subheading} > <h3>Address</h3></div>
-    <p>{supplier?.address?.houseNo}, {supplier?.address?.street}</p>
-    <p>{supplier?.address?.city}, {supplier?.address?.state}</p>
-    <p>Pincode: {supplier?.address?.pincode}</p>
-   </div>
-
-  <div className='flex border-t-4 m-5 gap-5 justify-center items-center'>
-      <button  className="bg-blue-500 w-30 p-1 m-5  hover:bg-green-500 rounded-xl" onClick={() => navigate(`/suppliers/edit/${_id}`)}>
-      Edit Supplier
-    </button>
-     <button  className="bg-blue-500 p-1 m-5 w-30  hover:bg-green-500 rounded-xl" onClick={() => navigate(`/suppliers`)}>
-      Back
-    </button>
-  </div>
-  </div>
-  </div>
-);
-}
-export default SupplierDetails
+export default SupplierDetails;

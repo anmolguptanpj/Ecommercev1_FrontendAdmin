@@ -1,21 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
-  Routes,
-  Route,
-  Outlet,
   Navigate,
+  Outlet,
+  Route,
+  Routes,
 } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Toaster } from "react-hot-toast";
 
-import { useSelector } from "react-redux";
-import "./App.css";
-
-import { Toaster } from "react-hot-toast";  // ← ADD THIS
-
-import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
+import { getCurrentUser } from "./store/authSlice";
 
-// Pages
 import Login from "./Pages/Login";
 import Orders from "./Pages/Orders";
 import Sales from "./Pages/Sales";
@@ -32,37 +28,54 @@ import SupplierRegistered from "./Pages/SupplierRegistered";
 import SupplierDetails from "./Pages/SupplierDetails";
 import SupplierEdits from "./Pages/SupplierEdits";
 
+import "./App.css";
+
+function LoadingScreen() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-white text-black">
+      Loading...
+    </div>
+  );
+}
+
+function PublicLayout() {
+  return (
+    <div id="main" className="flex min-h-screen bg-white text-black">
+      <Sidebar />
+      <main className="min-w-0 flex-1 overflow-y-auto bg-white">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
+
+function ProtectedLayout() {
+  const { isAuthenticated, authChecking } = useSelector((state) => state.auth);
+
+  if (authChecking) {
+    return <LoadingScreen />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <PublicLayout />;
+}
+
 function App() {
+  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
 
-  const PrivateRoute = ({ children }) =>
-    isAuthenticated ? children : <Navigate to="/" replace />;
-
-  const PublicLayout = () => (
-    <div id="main">
-      <div id="header"><Header /></div>
-      <div id="body">
-        <div className="bg-yellow-400 shadow-2xl" id="sidebar"><Sidebar /></div>
-        <div className="bg-blue-950" id="outlet"><Outlet /></div>
-      </div>
-    </div>
-  );
-
-  const SecLayout = () => (
-    <div id="main">
-      <div id="header"><Header /></div>
-      <div id="outlet"><Outlet /></div>
-    </div>
-  );
+  useEffect(() => {
+    dispatch(getCurrentUser());
+  }, [dispatch]);
 
   return (
     <>
-      <Toaster position="top-right" />   {/* ← GLOBAL TOAST COMPONENT */}
-
+      <Toaster position="top-right" />
       <Router>
         <Routes>
-
-          {/* LOGIN */}
           <Route
             path="/"
             element={
@@ -70,25 +83,9 @@ function App() {
             }
           />
 
-          {/* DASHBOARD */}
-          <Route
-            element={
-              <PrivateRoute>
-                <SecLayout />
-              </PrivateRoute>
-            }
-          >
+          <Route element={<ProtectedLayout />}>
+            <Route path="/home" element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} />
-          </Route>
-
-          {/* MAIN PAGES */}
-          <Route
-            element={
-              <PrivateRoute>
-                <PublicLayout />
-              </PrivateRoute>
-            }
-          >
             <Route path="/staff" element={<Staff />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/products" element={<Products />} />
@@ -97,13 +94,14 @@ function App() {
             <Route path="/returns" element={<Returns />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/suppliers" element={<Suppliers />} />
-            <Route path="/home" element={<Home />} />
             <Route path="/register/supplier" element={<Registration />} />
-            <Route path="/supplier/congratulations/" element={<SupplierRegistered />} />
+            <Route
+              path="/supplier/congratulations/"
+              element={<SupplierRegistered />}
+            />
             <Route path="/suppliers/details/:_id" element={<SupplierDetails />} />
             <Route path="/suppliers/edit/:_id" element={<SupplierEdits />} />
           </Route>
-
         </Routes>
       </Router>
     </>

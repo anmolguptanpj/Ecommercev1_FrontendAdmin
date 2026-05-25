@@ -1,59 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery, useMutation } from "@tanstack/react-query";
 import api from "../api";
+import {
+  ButtonLink,
+  DocumentPreview,
+  FieldGrid,
+  FileInput,
+  Section,
+  SupplierBody,
+  SupplierHeader,
+  SupplierPage,
+  Surface,
+  TextInput,
+} from "../components/SupplierUI";
 
-function EditSupplier() {
+const toForm = (supplier) => ({
+  supplierName: supplier.supplierName || "",
+  gstNumber: supplier.gstNumber || "",
+  panNumber: supplier.panNumber || "",
+  address: {
+    houseNo: supplier.address?.houseNo || "",
+    street: supplier.address?.street || "",
+    city: supplier.address?.city || "",
+    state: supplier.address?.state || "",
+    pincode: supplier.address?.pincode || "",
+  },
+  gstDocument: supplier.gstDocument || "",
+  panDocument: supplier.panDocument || "",
+});
+
+function SupplierEditForm({ supplier, supplierId }) {
   const navigate = useNavigate();
-  const { _id } = useParams();
-    const heading = ""
-  const subheading =""
-
-  // Fetch Supplier Data
-  const fetchSupplier = async () => {
-    const res = await api.get(`/admin/suppliers/${_id}`);
-    return res.data.data;
-  };
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["supplier", _id],
-    queryFn: fetchSupplier,
-    enabled: !!_id,
-  });
-
-
-  // Local state with proper default values
-  const [form, setForm] = useState({
-    supplierName: "",
-    gstNumber: "",
-    panNumber: "",
-    address: { houseNo: "", street: "", city: "", state: "", pincode: "" },
-    gstDocument: "",
-    panDocument: ""
-  });
-
+  const queryClient = useQueryClient();
+  const [form, setForm] = useState(() => toForm(supplier));
   const [gstFile, setGstFile] = useState(null);
   const [panFile, setPanFile] = useState(null);
-
-  // 🔥 Prefill form when data loads - Fixed to handle all values properly
-  useEffect(() => {
-    if (data) {
-      setForm({
-        supplierName: data.supplierName || "",
-        gstNumber: data.gstNumber || "",
-        panNumber: data.panNumber || "",
-        address: {
-          houseNo: data.address?.houseNo || "",
-          street: data.address?.street || "",
-          city: data.address?.city || "",
-          state: data.address?.state || "",
-          pincode: data.address?.pincode || ""
-        },
-        gstDocument: data.gstDocument || "",
-        panDocument: data.panDocument || ""
-      });
-    }
-  }, [data]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,199 +46,153 @@ function EditSupplier() {
         ...prev,
         address: { ...prev.address, [key]: value },
       }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
+      return;
     }
+
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Submit Update with FormData
-  const updateSupplier = async () => {
-    const fd = new FormData();
-    console.log("ram")
-    // normal fields
-    Object.keys(form).forEach((key) => {
-      if (key === "address") {
-        Object.keys(form.address).forEach((a) =>
-          fd.append(`address[${a}]`, form.address[a])
-        );
-      } else if (key !== "gstDocument" && key !== "panDocument") {
-        // Don't append document URLs, only the new files
-        fd.append(key, form[key]);
-      }
-    });
+  const updateSupplier = useMutation({
+    mutationFn: async () => {
+      const fd = new FormData();
 
-    // files
-    if (gstFile) fd.append("gstDocument", gstFile);
-    if (panFile) fd.append("panDocument", panFile);
-    console.log()
-    return api.put(`/admin/suppliers/${_id}`, fd, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-  };
+      Object.keys(form).forEach((key) => {
+        if (key === "address") {
+          Object.keys(form.address).forEach((addressKey) => {
+            fd.append(`address[${addressKey}]`, form.address[addressKey]);
+          });
+          return;
+        }
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: updateSupplier,
-    onSuccess: () => {
-      navigate(`/suppliers/details/${_id}`);
+        if (key !== "gstDocument" && key !== "panDocument") {
+          fd.append(key, form[key]);
+        }
+      });
+
+      if (gstFile) fd.append("gstDocument", gstFile);
+      if (panFile) fd.append("panDocument", panFile);
+
+      return api.put(`/admin/suppliers/${supplierId}`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["supplier", supplierId] });
+      await queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+      navigate(`/suppliers/details/${supplierId}`);
     },
   });
 
-  if (isLoading) return <p>Loading supplier...</p>;
-  if (isError) return <p>Error loading supplier.</p>;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateSupplier.mutate();
+  };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-      <div style={{ width: "500px" }}>
-        <h1 className="text-4xl text-center font-bold border-y-4 py-3" >Edit Supplier</h1>
+    <form onSubmit={handleSubmit}>
+      <Surface>
+        <Section title="Business Details">
+          <FieldGrid>
+            <TextInput label="Supplier Name" name="supplierName" value={form.supplierName} onChange={handleChange} required />
+            <TextInput label="GST Number" name="gstNumber" value={form.gstNumber} onChange={handleChange} />
+            <TextInput label="PAN Number" name="panNumber" value={form.panNumber} onChange={handleChange} />
+          </FieldGrid>
+        </Section>
 
-       <div className="p-2 border-b-4">
-         <h3 className="border-y-2 text-center">Basic Information</h3>
-       <div className="flex gap-2">
-          <label>Name:</label>
-        <input
-        className="border-b-2 focus:outline-none"
-          type="text"
-          name="supplierName"
-          value={form.supplierName}
-          onChange={handleChange}
-          placeholder="Supplier Name"
-        />
-       </div>
+        <Section title="Business Address">
+          <FieldGrid>
+            <TextInput label="House No" name="address.houseNo" value={form.address.houseNo} onChange={handleChange} />
+            <TextInput label="Street" name="address.street" value={form.address.street} onChange={handleChange} />
+            <TextInput label="City" name="address.city" value={form.address.city} onChange={handleChange} />
+            <TextInput label="State" name="address.state" value={form.address.state} onChange={handleChange} />
+            <TextInput label="Pincode" name="address.pincode" value={form.address.pincode} onChange={handleChange} />
+          </FieldGrid>
+        </Section>
 
-       <div className="py-2">
-         <h3 className="border-y-2 text-center" >Documents</h3>
+        <Section title="Documents" description="Upload a new file only when replacing the existing document.">
+          <FieldGrid>
+            <FileInput label="Upload GST Document" onChange={(e) => setGstFile(e.target.files?.[0] || null)} />
+            <FileInput label="Upload PAN Document" onChange={(e) => setPanFile(e.target.files?.[0] || null)} />
+          </FieldGrid>
 
-        <div className="flex gap-2 " >
-          <label>GST Number:</label>
-        <input
-         className="border-b-2 focus:outline-none"
-          type="text"
-          name="gstNumber"
-          value={form.gstNumber}
-          onChange={handleChange}
-        />
+          <div className="mt-6 grid gap-5 lg:grid-cols-2">
+            <DocumentPreview title="Current GST Document" url={form.gstDocument} />
+            <DocumentPreview title="Current PAN Document" url={form.panDocument} />
+          </div>
+        </Section>
 
-        <label>Upload GST Document:</label>
-        <input
-           className="border-b-2 focus:outline-none"
-          type="file"
-          accept="image/*,.pdf"
-          onChange={(e) => setGstFile(e.target.files[0])}
-            style={{ width: "100%", marginBottom: "10px" }}
-        />
+        {updateSupplier.isError && (
+          <div className="border-t border-gray-100 px-6 py-4 text-sm text-red-500">
+            {updateSupplier.error?.message || "Failed to update supplier"}
+          </div>
+        )}
+
+        <div className="flex flex-wrap justify-end gap-3 border-t border-gray-100 p-6">
+          <ButtonLink to={`/suppliers/details/${supplierId}`} variant="secondary">Cancel</ButtonLink>
+          <button
+            type="submit"
+            disabled={updateSupplier.isPending}
+            className={`inline-flex items-center justify-center rounded-2xl px-5 py-2.5 text-sm font-medium text-white transition ${
+              updateSupplier.isPending ? "cursor-not-allowed bg-gray-400" : "bg-black hover:opacity-90"
+            }`}
+          >
+            {updateSupplier.isPending ? "Saving..." : "Save Changes"}
+          </button>
         </div>
-       </div>
+      </Surface>
+    </form>
+  );
+}
 
-        {form.gstDocument && (
-          <div style={{ marginBottom: "10px" }}>
-            <a href={form.gstDocument} target="_blank" rel="noreferrer">
-              View Existing GST Document
-            </a>
-          </div>
-        )}
+function EditSupplier() {
+  const { _id } = useParams();
 
-      <div className="flex gap-2  ">
-          <label>PAN Number:</label>
-        <input
-        
-         className="border-b-2 focus:outline-none"
-          type="text"
-          name="panNumber"
-          value={form.panNumber}
-          onChange={handleChange}
-        />
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["supplier", _id],
+    queryFn: async () => {
+      const res = await api.get(`/admin/suppliers/${_id}`);
+      return res.data.data;
+    },
+    enabled: !!_id,
+  });
 
-        <label>Upload PAN Document:</label>
-        <input
-           className="border-b-2 focus:outline-none"
-          type="file"
-          accept="image/*,.pdf"
-          onChange={(e) => setPanFile(e.target.files[0])}
-          style={{ width: "100%", marginBottom: "10px" }}
-        />
-      </div>
+  if (isLoading) {
+    return (
+      <SupplierPage>
+        <div className="flex min-h-screen items-center justify-center text-gray-500">
+          Loading supplier...
+        </div>
+      </SupplierPage>
+    );
+  }
 
-        {form.panDocument && (
-          <div style={{ marginBottom: "10px" }}>
-            <a href={form.panDocument} target="_blank" rel="noreferrer">
-              View Existing PAN Document
-            </a>
-          </div>
-        )}
+  if (isError) {
+    return (
+      <SupplierPage>
+        <div className="flex min-h-screen items-center justify-center text-red-500">
+          Failed to load supplier
+        </div>
+      </SupplierPage>
+    );
+  }
 
-     <div>
-         <h3 className="border-y-2 text-center">Address</h3>
-    <div className="flex flex-col">
-         <div className="flex gap-3">
-          <label>HouseNo:</label>
-           <input
-          type="text"
-          className="border-b-2 focus:outline-none "
-          placeholder="House No"
-          name="address.houseNo"
-          value={form.address.houseNo}
-          onChange={handleChange}
-          
-        /></div>
-      <div className="flex gap-2">
-        <label>Street:</label>
-          <input
-          type="text"
-             className="border-b-2 focus:outline-none"
-          placeholder="Street"
-          name="address.street"
-          value={form.address.street}
-          onChange={handleChange}
-        
-        />
-      </div>
-   <div className="flex gap-2">
-       <label>State:</label>
-        <input
-          type="text"
-             className="border-b-2 focus:outline-none"
-          placeholder="State"
-          name="address.state"
-          value={form.address.state}
-          onChange={handleChange}
-         
-        />
-   </div>
-  <div className="flex gap-2">
-     <label>
-    PIN CODE:
-   </label>
-        <input
-          type="text"
-             className="border-b-2 focus:outline-none"
-          placeholder="Pincode"
-          name="address.pincode"
-          value={form.address.pincode}
-          onChange={handleChange}
-        />
-    </div>
-  </div>
-     </div>
-       </div>
+  return (
+    <SupplierPage>
+      <SupplierHeader
+        title="Edit Supplier"
+        subtitle={data?.supplierName || "Update supplier profile and documents"}
+        actions={
+          <>
+            <ButtonLink to={`/suppliers/details/${_id}`} variant="secondary">View Details</ButtonLink>
+            <ButtonLink to="/suppliers" variant="secondary">Back to Suppliers</ButtonLink>
+          </>
+        }
+      />
 
-      <div className=" pt-2 flex justify-evenly">
-          <button 
-          className="bg-green-500 w-20 px-2 rounded-2xl"
-          onClick={() => mutate()} 
-          disabled={isPending}
-        >
-          {isPending ? "Saving..." : "Save"}
-        </button>
-
-        <button
-        className="bg-gray-400 px-2 rounded-2xl"
-          onClick={() => navigate(`/suppliers/details/${_id}`)}
-        >
-          Cancel
-        </button>
-      </div>
-      </div>
-    </div>
+      <SupplierBody narrow>
+        <SupplierEditForm key={data?._id} supplier={data} supplierId={_id} />
+      </SupplierBody>
+    </SupplierPage>
   );
 }
 
